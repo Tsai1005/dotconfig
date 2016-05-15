@@ -146,7 +146,7 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'OmniCppComplete'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'repeat.vim'
-"Bundle 'msanders/snipmate.vim'
+Bundle 'msanders/snipmate.vim'
 Bundle 'wesleyche/SrcExpl'
 " Bundle 'ervandew/supertab'                "有时与 snipmate 插件冲突
 Bundle 'std_c.zip'
@@ -156,6 +156,8 @@ Bundle 'majutsushi/tagbar'
 Bundle 'taglist.vim'
 Bundle 'TxtBrowser'
 Bundle 'ZoomWin'
+Bundle 'lookupfile'
+Bundle 'genutils'
 
 " -----------------------------------------------------------------------------
 "  < 编码配置 >
@@ -258,8 +260,8 @@ if g:isGUI
 	"set background=dark
 	"colorscheme solarized
 else
-    colorscheme molokai
-    "colorscheme Tomorrow-Night-Eighties               "终端配色方案
+    " colorscheme molokai
+    colorscheme Tomorrow-Night-Eighties               "终端配色方案
 endif
 
 " 显示/隐藏菜单栏、工具栏、滚动条，可用 Ctrl + F11 切换
@@ -703,6 +705,7 @@ let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符�
 let g:LookupFile_PreservePatternHistory = 1     "保存查找历史
 let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项目
 let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文件
+let g:LookupFile_DisableDefaultMap=1
 if filereadable("filenametags")                "设置tag文件的名字
 	let g:LookupFile_TagExpr = '"./filenametags"'
 endif
@@ -761,20 +764,28 @@ if has("cscope")
 	"快捷键设置
 	"Find this C symbol
 	nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <s-s> :cs find s 
 	"Find this definition
 	nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <s-g> :cs find g 
 	"Find functions calling this function
 	nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <s-c> :cs find c 
 	"Find this text string	
-	nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <s-t> :cs find t 
 	"Find this egrep pattern
 	nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <s-e> :cs find e 
 	"Find this file
 	nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <s-f> :cs find f 
 	"Find files #including this file
 	nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <s-i> :cs find i 
 	"Find functions called by this function	
 	nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>	
+    nmap <s-d> :cs find d 
 endif
 
 
@@ -894,6 +905,18 @@ endfunction
 command Sync :silent call SyncAllTags()
 
 
+" set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
+set errorformat=%f:%l:%c:\ fatal\ error:\ %m
+" set errorformat+=%f:%l:%c:\ fatal\ error:\ %m,%f:(%.%#):\ %m
+"set errorformat+=%f:%l:%c:\ warning:\ %m
+set errorformat+=%Dmake[%*\\d]:\ Entering\ directory\ `%f',%Dmake[%*\\d]:\ Leaving\ directory\ `%f',
+set errorformat+=CC\ %f
+set errorformat+=%DCCDIR\ %f
+" set errorformat+=make[%*\\d]:\ ***\ [%f]\ Error\ %n,
+"set errorformat+=%f:\ undefined\ reference\ to\ %m
+" set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
+set errorformat+=make:\ %m
+
 vmap ;s		:s/\\/\//g<CR>
 vmap ;a     :s/$/ \\/g<CR>
 vmap ;o     :s/\.c/\.o/g<CR>
@@ -914,5 +937,7 @@ inoremap pr<CR> printf("\n");<Esc>F\ha
 inoremap bit<CR> BIT()<Esc>i
 inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
+
+command Vimrc edit ~/.vimrc
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
