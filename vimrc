@@ -570,6 +570,8 @@ noremap <c-l> <c-w>l
 let g:neocomplcache_enable_at_startup = 1     "vim 启动时启用插件
 " let g:neocomplcache_disable_auto_complete = 1 "不自动弹出补全列表
 " 在弹出补全列表后用 <c-p> 或 <c-n> 进行上下选择效果比较好
+" smartcase
+let g:neocomplcache#enable_smart_case = 1
 
 " -----------------------------------------------------------------------------
 "  < nerdcommenter 插件配置 >
@@ -712,7 +714,7 @@ endif
 nmap <c-f> :LUTags<CR>
 
 " 使用 ctrlsf.vim 插件在工程内全局查找光标所在关键字，设置快捷键。快捷键速记法：search in project
-nnoremap <c-s> :CtrlSF<CR>
+" nnoremap <c-s> :CtrlSF<CR>
 """"""""""""""""""""""""""""""
 " showmarks setting
 """"""""""""""""""""""""""""""
@@ -764,28 +766,28 @@ if has("cscope")
 	"快捷键设置
 	"Find this C symbol
 	nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
-    nmap <s-s> :cs find s 
+    nmap ;s :cs find s 
 	"Find this definition
 	nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
-    nmap <s-g> :cs find g 
+    nmap ;g :cs find g 
 	"Find functions calling this function
 	nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <s-c> :cs find c 
+    nmap ;c :cs find c 
 	"Find this text string	
     nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
-    nmap <s-t> :cs find t 
+    nmap ;t :cs find t 
 	"Find this egrep pattern
 	nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
-    nmap <s-e> :cs find e 
+    nmap ;e :cs find e 
 	"Find this file
 	nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
-    nmap <s-f> :cs find f 
+    nmap ;f :cs find f 
 	"Find files #including this file
 	nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <s-i> :cs find i 
+    nmap ;i :cs find i 
 	"Find functions called by this function	
 	nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>	
-    nmap <s-d> :cs find d 
+    nmap ;d :cs find d 
 endif
 
 
@@ -902,10 +904,10 @@ function SyncAllTags()
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
 	let g:LookupFile_TagExpr = '"./filenametags"'
 endfunction
-command Sync :silent call SyncAllTags()
+" command Sync :silent call SyncAllTags()
+command Sync :!bash sync.sh<CR>
 
-
-" set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
+set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
 set errorformat=%f:%l:%c:\ fatal\ error:\ %m
 " set errorformat+=%f:%l:%c:\ fatal\ error:\ %m,%f:(%.%#):\ %m
 "set errorformat+=%f:%l:%c:\ warning:\ %m
@@ -914,10 +916,10 @@ set errorformat+=CC\ %f
 set errorformat+=%DCCDIR\ %f
 " set errorformat+=make[%*\\d]:\ ***\ [%f]\ Error\ %n,
 "set errorformat+=%f:\ undefined\ reference\ to\ %m
-" set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
+set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
 set errorformat+=make:\ %m
 
-vmap ;s		:s/\\/\//g<CR>
+vmap ;/		:s/\\/\//g<CR>
 vmap ;a     :s/$/ \\/g<CR>
 vmap ;o     :s/\.c/\.o/g<CR>
 
@@ -939,5 +941,27 @@ inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
 
 command Vimrc edit ~/.vimrc
+
+"vimdiff setting
+set laststatus=2    "show the status line"
+set statusline=%-10.3n "buffer number"
+
+" map <silent> <leader>1 :diffget 1<CR> :diffupdate<CR>
+" map <silent> <leader>2 :diffget 2<CR> :diffupdate<CR>
+" map <silent> <leader>3 :diffget 3<CR> :diffupdate<CR>
+" map <silent> <leader>4 :diffget 4<CR> :diffupdate<CR>
+
+"windows adjust
+nmap + <c-w>+
+nmap - <c-w>-
+" nmap < <c-w><
+" nmap > <c-w>>
+"
+setlocal noswapfile
+
+nmap <F7> :make<CR>
+nmap <F8> :make -f MakeALL.mk 
+nmap <F5> :cp<CR>
+nmap <F6> :cn<CR>
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
