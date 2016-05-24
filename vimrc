@@ -959,9 +959,11 @@ nmap - <c-w>-
 "
 setlocal noswapfile
 
+nmap <silent> <F4> :Grep<CR>
+
 nmap <F7> :make<CR>
-nmap <F8> :make -f MakeALL.mk 
-nmap <F5> :cp<CR>
-nmap <F6> :cn<CR>
+nmap <silent> <F8> :make -f MakeALL.mk 
+nmap <silent> <F5> :cp<CR>
+nmap <silent> <F6> :cn<CR>
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
