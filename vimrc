@@ -904,8 +904,14 @@ function SyncAllTags()
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
 	let g:LookupFile_TagExpr = '"./filenametags"'
 endfunction
-" command Sync :silent call SyncAllTags()
+
+if g:islinux
 command Sync :!bash sync.sh<CR>
+endif
+
+if g:iswindows
+command Sync :silent call SyncAllTags()
+endif
 
 set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
 set errorformat=%f:%l:%c:\ fatal\ error:\ %m
@@ -940,7 +946,14 @@ inoremap bit<CR> BIT()<Esc>i
 inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
 
+if g:islinux
 command Vimrc edit ~/.vimrc
+endif
+
+if g:iswindows
+command Vimrc edit e:\Studio\my_vim\_vimrc
+endif
+
 
 "vimdiff setting
 set laststatus=2    "show the status line"
