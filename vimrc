@@ -882,30 +882,39 @@ endif
 " 指在常规模式下按"\"键加"t"键，这里不是同时按，而是先按"\"键后按"t"键，间隔在一
 " 秒内，而<Leader>cs是先按"\"键再按"c"又再按"s"键
 
-function Remove_shell()
-	!del shell
-endfunction
+" function Remove_shell()
+	" !del shell
+" endfunction
 
-if filereadable("shell")
-	let g:Env_shell = 1
-	:silent call Remove_shell()
-else
-	let g:Env_shell = 0
-endif
+" if filereadable("shell")
+	" let g:Env_shell = 1
+	" :silent call Remove_shell()
+" else
+	" let g:Env_shell = 0
+" endif
 
 function SyncAllTags()
 	cs kill -1
-	if g:Env_shell == 1
+    if g:islinux
 		!bash sync.sh
+    endif
 	else
+    if g:iswindows
 		!sync.bat
+    endif
 	endif
 	cs add cscope.out
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
 	let g:LookupFile_TagExpr = '"./filenametags"'
 endfunction
-" command Sync :silent call SyncAllTags()
-command Sync :!bash sync.sh<CR>
+
+if g:islinux
+command! Sync :call SyncAllTags()
+endif
+
+if g:iswindows
+command! Sync :silent call SyncAllTags()
+endif
 
 set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
 set errorformat=%f:%l:%c:\ fatal\ error:\ %m
@@ -940,8 +949,16 @@ inoremap bit<CR> BIT()<Esc>i
 inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
 
+if g:islinux
 command! Source :source ~/.vimrc
 command! Vimrc :edit ~/.vimrc
+endif
+
+if g:iswindows
+command! Source :source e:\Studio\my_vim\_vimrc
+command! Vimrc :edit e:\Studio\my_vim\_vimrc
+endif
+
 
 "vimdiff setting
 set laststatus=2    "show the status line"
