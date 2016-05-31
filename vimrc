@@ -36,7 +36,7 @@ if (g:iswindows && g:isGUI)
 	behave mswin
     set diffexpr=MyDiff()
 
-    function MyDiff()
+    function! MyDiff()
         let opt = '-a --binary '
         if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
         if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
@@ -757,6 +757,7 @@ if has("cscope")
 	set csto=0
 	"在当前目录中添加任何数据库
 	if filereadable("cscope.out")
+        cs kill -1
 		cs add cscope.out
 	"否则添加数据库环境中所指出的
 	elseif $CSCOPE_DB != ""
@@ -893,16 +894,14 @@ endif
 	" let g:Env_shell = 0
 " endif
 
-function SyncAllTags()
+function! SyncAllTags()
 	cs kill -1
     if g:islinux
 		!bash sync.sh
     endif
-	else
     if g:iswindows
 		!sync.bat
     endif
-	endif
 	cs add cscope.out
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
 	let g:LookupFile_TagExpr = '"./filenametags"'
