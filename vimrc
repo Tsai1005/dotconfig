@@ -940,7 +940,8 @@ inoremap bit<CR> BIT()<Esc>i
 inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
 
-command Vimrc edit ~/.vimrc
+command! Source :source ~/.vimrc
+command! Vimrc :edit ~/.vimrc
 
 "vimdiff setting
 set laststatus=2    "show the status line"
@@ -954,16 +955,38 @@ set statusline=%-10.3n "buffer number"
 "windows adjust
 nmap + <c-w>+
 nmap - <c-w>-
-" nmap < <c-w><
-" nmap > <c-w>>
+nmap < <c-w><
+nmap > <c-w>>
 "
 setlocal noswapfile
 
 nmap <silent> <F4> :Grep<CR>
 
 nmap <F7> :make<CR>
-nmap <silent> <F8> :make -f MakeALL.mk 
+nmap <F8> :make clean<CR>
+
+nmap <F9> :make -f MakeALL.mk 
+nmap <F10> :make -f MakeALL.mk clean
+
 nmap <silent> <F5> :cp<CR>
 nmap <silent> <F6> :cn<CR>
+
+"save and load 
+" let g:AutoSessionFile="project.vim"
+" let g:OrigPWD=getcwd()
+" if (filereadable(g:AutoSessionFile))
+    " if argc() == 0
+        " au VimEnter * call EnterHandler()
+        " au VimLeave * call LeaveHandler()
+    " endif
+" endif
+
+" function! EnterHandler()
+    " exec "source ".g:AutoSessionFile
+" endfunction
+
+" function! LeaveHandler()
+    " exec "mks! ".g:OrigPWD."/".g:AutoSessionFile
+" endfunction
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
