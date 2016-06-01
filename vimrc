@@ -289,16 +289,16 @@ endif
 " 以下只做了 C、C++ 的单文件配置，其它语言可以参考以下配置增加
 
 " F9 一键保存、编译、连接存并运行
-map <F9> :call Run()<CR>
-imap <F9> <ESC>:call Run()<CR>
+" map <F9> :call Run()<CR>
+" imap <F9> <ESC>:call Run()<CR>
 
-" Ctrl + F9 一键保存并编译
-map <c-F9> :call Compile()<CR>
-imap <c-F9> <ESC>:call Compile()<CR>
+" " Ctrl + F9 一键保存并编译
+" map <c-F9> :call Compile()<CR>
+" imap <c-F9> <ESC>:call Compile()<CR>
 
-" Ctrl + F10 一键保存并连接
-map <c-F10> :call Link()<CR>
-imap <c-F10> <ESC>:call Link()<CR>
+" " Ctrl + F10 一键保存并连接
+" map <c-F10> :call Link()<CR>
+" imap <c-F10> <ESC>:call Link()<CR>
 
 let s:LastShellReturn_C = 0
 let s:LastShellReturn_L = 0
@@ -887,7 +887,7 @@ endif
 	" !del shell
 " endfunction
 
-" if filereadable("shell")
+" if filereadable("SHELL")
 	" let g:Env_shell = 1
 	" :silent call Remove_shell()
 " else
