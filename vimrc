@@ -987,6 +987,8 @@ nmap <F10> :make -f MakeALL.mk clean
 nmap <silent> <F5> :cp<CR>
 nmap <silent> <F6> :cn<CR>
 
+nmap ;f 	/\<\><Left><Left>
+
 "save and load 
 " let g:AutoSessionFile="project.vim"
 " let g:OrigPWD=getcwd()
@@ -1004,5 +1006,20 @@ nmap <silent> <F6> :cn<CR>
 " function! LeaveHandler()
     " exec "mks! ".g:OrigPWD."/".g:AutoSessionFile
 " endfunction
+"
+
+" support tmux
+if exists('$TMUX')
+    set term=screen-256color
+endif
+
+" if exists('$TMUX')
+    " let &t_SI = "\<Esc>Ptmux;\<Esc>]50,CursorShape=1\x7\<Esc>\\"
+    " let &t_EI = "\<Esc>Ptmux;\<Esc>]50,CursorShape=0\x7\<Esc>\\"
+" else
+    " let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    " let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+" endif
+
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
