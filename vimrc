@@ -609,7 +609,9 @@ set completeopt=menu                        "关闭预览窗口
 "  < powerline 插件配置 >
 " -----------------------------------------------------------------------------
 " 状态栏插件，更好的状态栏效果
-
+set laststatus=2
+let g:Powerline_symbols="fancy"
+" set fillchars+=stl:\,stlnc:\
 " -----------------------------------------------------------------------------
 "  < repeat 插件配置 >
 " -----------------------------------------------------------------------------
@@ -927,7 +929,7 @@ set errorformat+=%DCCDIR\ %f
 set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
 set errorformat+=make:\ %m
 
-vmap ;/		:s/\\/\//g<CR>
+vmap ;l		:s/\\/\//g<CR>
 vmap ;a     :s/$/ \\/g<CR>
 vmap ;o     :s/\.c/\.o/g<CR>
 
