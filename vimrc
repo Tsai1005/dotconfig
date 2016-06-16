@@ -981,8 +981,11 @@ nmap <silent> <F4> :Grep<CR>
 nmap <F7> :make<CR>
 nmap <F8> :make clean<CR>
 
-nmap <F9> :make -f MakeALL.mk 
-nmap <F10> :make -f MakeALL.mk clean
+nmap <F9> :make -f MakeALL.mk -j && make -f MakeALL.mk apps<CR>
+nmap <F10> :make -f MakeALL.mk clean && make -f MakeALL.mk clean-apps<CR>
+
+nmap <F11> :make -f MakeALL.mk 
+nmap <F12> :make -f MakeALL.mk clean 
 
 nmap <silent> <F5> :cp<CR>
 nmap <silent> <F6> :cn<CR>
