@@ -1,0 +1,18 @@
+[user]
+	email = change.tsai@gmail.com
+	name = Tsai1005
+[push]
+	default = simple
+[core]
+	editor = vim
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
+[merge]
+	tool = vimdiff
+[mergetool]
+	prompt = false
+	keepBackup = false
