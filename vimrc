@@ -1026,5 +1026,24 @@ endif
     " let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 " endif
 
+set nowrapscan
+nnoremap <Space> :
+nnoremap <C-p> "+p
+nnoremap <C-y> "+y
+
+" paste system clipboard 
+inoremap <S-Insert> <ESC>"+p']a
+
+" paste system buffer
+" set clipboard=unnamed
+" paste system clipboard 
+" set clipboard=unnamedplus
+
+set pastetoggle=<F3>
+
+" yank to system buffer
+" set mouse=a
+" yank to system clipboard
+set mouse=v
 
 noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
