@@ -5,12 +5,20 @@
 	default = simple
 [core]
 	editor = vim
+[alias]
+	st = status 
+	co = checkout
+	br = branch
+	mg = merge
+	ci = commit -s
+	dt = difftool
+	mt = mergetool
+    last = log -1 HEAD
+    cf = config
 [diff]
 	tool = vimdiff
 [difftool]
 	prompt = false
-[alias]
-	d = difftool
 [merge]
 	tool = vimdiff
 [mergetool]
