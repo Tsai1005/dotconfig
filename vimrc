@@ -654,7 +654,18 @@ let c_cpp_comments = 0
 "  < Syntastic 插件配置 >
 " -----------------------------------------------------------------------------
 " 用于保存文件时查检语法
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_enable_signs = 1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_auto_jump = 1
 " -----------------------------------------------------------------------------
 "  < Tagbar 插件配置 >
 " -----------------------------------------------------------------------------
@@ -746,6 +757,56 @@ let g:miniBufExplMapWindowNavArrows = 1
 "let g:miniBufExplMapCTabSwitchBufs = 1
 let g:miniBufExplModSelTarget = 1 
 "let g:miniBufExplVSplit = 20
+"
+""""""""""""""""""""""""""""""
+" airline
+""""""""""""""""""""""""""""""
+let g:airline_theme='luna'
+" let g:airline#extensions#tabline#left_sep = ' '
+" let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_powerline_fonts = 1
+
+" let g:airline#extensions#branch#enabled = 1
+
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#vcs_priority = ["git"]
+" enable/disable detection of whitespace errors. >
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#symbol = '!'
+
+" enable/disable enhanced tabline. (c)
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 0
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+
+"设置切换Buffer快捷键"
+nnoremap <C-N> :bn<CR>
+nnoremap <C-P> :bp<CR>
+""
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+" nmap <leader>- <Plug>AirlineSelectPrevTab
+" nmap <leader>+ <Plug>AirlineSelectNextTab
+
+" fix exit insert mode delay
+set ttimeoutlen=50
+
+""""""""""""""""""""""""""""""
+" solarized
+""""""""""""""""""""""""""""""
+" let g:solarized_termcolors=256
+" set background=dark
+" colorscheme solarized
+" let g:solarized_termtrans=0
+" let g:solarized_contrast="normal"
+" let g:solarized_visibility="normal"
 " -----------------------------------------------------------------------------
 "  < cscope 工具配置 >
 " -----------------------------------------------------------------------------
@@ -917,21 +978,21 @@ if g:iswindows
 command! Sync :silent call SyncAllTags()
 endif
 
-set errorformat=%f:%l:%c:\ error:\ %m,%f:(%.%#):\ %m
-set errorformat=%f:%l:%c:\ fatal\ error:\ %m
+" set errorformat=%f:%l:%c:\ fatal\ error:\ %m
 " set errorformat+=%f:%l:%c:\ fatal\ error:\ %m,%f:(%.%#):\ %m
-"set errorformat+=%f:%l:%c:\ warning:\ %m
-set errorformat+=%Dmake[%*\\d]:\ Entering\ directory\ `%f',%Dmake[%*\\d]:\ Leaving\ directory\ `%f',
-set errorformat+=CC\ %f
-set errorformat+=%DCCDIR\ %f
+" set errorformat+=%Dmake[%*\\d]:\ Entering\ directory\ `%f',%Dmake[%*\\d]:\ Leaving\ directory\ `%f',
+" set errorformat+=CC\ %f
+" set errorformat+=%DCCDIR\ %f
 " set errorformat+=make[%*\\d]:\ ***\ [%f]\ Error\ %n,
 "set errorformat+=%f:\ undefined\ reference\ to\ %m
-set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
-set errorformat+=make:\ %m
+" set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
+" set errorformat+=make:\ %m
+"
+" set efm=%f:%l:%c:\ error:\ %m
+" set efm+=%f:%l:%c:\ warning:\ %m
+" set efm=%f\|%l\ col\ %c\|\ error:
+" set efm=%f\|%l\ col\ %c\|\ warning:
 
-vmap ;l		:s/\\/\//g<CR>
-vmap ;a     :s/$/ \\/g<CR>
-vmap ;o     :s/\.c/\.o/g<CR>
 
 noremap \td O/*-TODO-*/<Esc> 
 inoremap if<CR> if (){<CR>}<Esc>kf(a
@@ -950,6 +1011,7 @@ inoremap bit<CR> BIT()<Esc>i
 inoremap st<CR> static
 inoremap {<CR> {<CR><CR>}<Esc>k
 
+
 if g:islinux
 command! Source :source ~/.vimrc
 command! Vimrc :edit ~/.vimrc
@@ -962,8 +1024,8 @@ endif
 
 
 "vimdiff setting
-set laststatus=2    "show the status line"
-set statusline=%-10.3n "buffer number"
+" set laststatus=2    "show the status line"
+" set statusline=%-10.3n "buffer number"
 
 " map <silent> <leader>1 :diffget 1<CR> :diffupdate<CR>
 " map <silent> <leader>2 :diffget 2<CR> :diffupdate<CR>
@@ -976,23 +1038,26 @@ nmap - <c-w>-
 nmap < <c-w><
 nmap > <c-w>>
 "
-setlocal noswapfile
 
-nmap <silent> <F4> :Grep<CR>
+" nmap <silent> <F4> :Grep<CR>
 
-nmap <F7> :make<CR>
-nmap <F8> :make clean<CR>
+nmap <silent> <F7> :make -j<CR>
+nmap <silent> <F8> :make clean<CR>
 
-nmap <F9> :make -f MakeALL.mk -j && make -f MakeALL.mk apps<CR>
-nmap <F10> :make -f MakeALL.mk clean && make -f MakeALL.mk clean-apps<CR>
+nmap <silent> <F9> :make -f MakeALL.mk -j 
+nmap <silent> <F10> :make -f MakeALL.mk clean 
 
-nmap <F11> :make -f MakeALL.mk 
-nmap <F12> :make -f MakeALL.mk clean 
+" nmap <F11> :make -f MakeALL.mk 
+" nmap <F12> :make -f MakeALL.mk clean 
 
 nmap <silent> <F5> :cp<CR>
 nmap <silent> <F6> :cn<CR>
 
 nmap ;f 	/\<\><Left><Left>
+vmap ;l		:s/\\/\//g<CR>
+vmap ;a     :s/$/ \\/g<CR>
+vmap ;o     :s/\.c/\.o/g<CR>
+nmap ;m     :%s/\r//g
 
 "save and load 
 " let g:AutoSessionFile="project.vim"
@@ -1028,8 +1093,8 @@ endif
 
 set nowrapscan
 nnoremap <Space> :
-nnoremap <C-p> "+p
-nnoremap <C-y> "+y
+" nnoremap <C-p> "1p
+" nnoremap <C-y> "1y
 
 " paste system clipboard 
 inoremap <S-Insert> <ESC>"+p']a

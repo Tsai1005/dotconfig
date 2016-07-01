@@ -6,7 +6,8 @@
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="agnoster"
+# ZSH_THEME="agnoster"
+ZSH_THEME="agnosterzak"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -50,7 +51,7 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git web-search wd tmux svn)
+plugins=(git web-search wd tmux svn zsh-autosuggestions)
 
 # User configuration
 
@@ -84,8 +85,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PI32V2_TOOLCHAINS="/opt/pi32v2/pi32v2-uclinux-toolchains"
-export TOOLS="~/.vim/bin"
-export PATH="$PATH:$PATH1:$PI32V2_TOOLCHAINS:$TOOLS"
+export VIM_TOOLS="~/.vim/bin"
+export GIT_TOOLS="~/git/tools"
+export PATH="$PATH:$PATH1:$PI32V2_TOOLCHAINS:$VIM_TOOLS:$GIT_TOOLS"
 export CLANG_COMPILER_RT="$PI32V2_TOOLCHAINS/compiler-rt.a"
 export CLANG="$PI32V2_TOOLCHAINS/pi32v2-uclinux-clang"
 export COMPILER=clang
@@ -102,7 +104,9 @@ fi
 # bindkey '^S' history-incremental-search-forward
 # bindkey '^P' history-search-backward
 # bindkey '^N' history-search-forward
+#
+alias fn="find -name "
 
 setopt AUTO_CD
-# setopt AUTO_LIST
-# setopt AUTO_MENU
+setopt AUTO_LIST
+setopt AUTO_MENU
