@@ -824,6 +824,36 @@ set ttimeoutlen=50
 " let g:solarized_termtrans=0
 " let g:solarized_contrast="normal"
 " let g:solarized_visibility="normal"
+"设置状态栏符号显示，下面编码用双引号"
+ let g:Powerline_symbols="fancy"
+ let g:airline_symbols = {}
+ let g:airline_left_sep = "\u2b80" 
+ let g:airline_left_alt_sep = "\u2b81"
+ let g:airline_right_sep = "\u2b82"
+ let g:airline_right_alt_sep = "\u2b83"
+ let g:airline_symbols.branch = "\u2b60"
+ let g:airline_symbols.readonly = "\u2b64"
+ let g:airline_symbols.linenr = "\u2b61"
+
+ "设置顶部tabline栏符号显示"
+ let g:airline#extensions#tabline#left_sep = "\u2b80"
+ let g:airline#extensions#tabline#left_alt_sep = "\u2b81"
+" function! AccentDemo()
+  " let keys = ['a','b','c','d','e','f','g','h']
+  " for k in keys
+    " call airline#parts#define_text(k, k)
+  " endfor
+  " call airline#parts#define_accent('a', 'red')
+  " call airline#parts#define_accent('b', 'green')
+  " call airline#parts#define_accent('c', 'blue')
+  " call airline#parts#define_accent('d', 'yellow')
+  " call airline#parts#define_accent('e', 'orange')
+  " call airline#parts#define_accent('f', 'purple')
+  " call airline#parts#define_accent('g', 'bold')
+  " call airline#parts#define_accent('h', 'italic')
+  " let g:airline_section_a = airline#section#create(keys)
+" endfunction
+" autocmd VimEnter * call AccentDemo()
 " -----------------------------------------------------------------------------
 "  < cscope 工具配置 >
 " -----------------------------------------------------------------------------
@@ -1128,4 +1158,65 @@ set pastetoggle=<F3>
 " yank to system clipboard
 set mouse=v
 
-noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
+
+fun! DeleteAllBuffersInWindow()
+    let s:curWinNr = winnr()
+    if winbufnr(s:curWinNr) == 1
+        ret
+    endif
+    let s:curBufNr = bufnr("%")
+    exe "bn"
+    let s:nextBufNr = bufnr("%")
+    while s:nextBufNr != s:curBufNr
+        exe "bn"
+        exe "bdel ".s:nextBufNr
+        let s:nextBufNr = bufnr("%")
+    endwhile
+endfun
+map <silent> <leader>bda     :call DeleteAllBuffersInWindow()<CR>
+
+function! AddTitle()
+    call append(0, "/*********************************************************************************************")
+    call append(1, "    *   Filename        : ".expand("%:t"))
+    call append(2, "")
+    call append(3, "    *   Description     : ")
+    call append(4, "")
+    call append(5, "    *   Author          : Bingquan")
+    call append(6, "")
+    call append(7, "    *   Email           : bingquan_cai@zh-jieli.com")
+    call append(8, "")
+    call append(9, "    *   Last modifiled  : ".strftime("%Y-%m-%d %H:%M"))
+    call append(10, "")
+    call append(11, "    *   Copyright:(c)JIELI  2011-2016  @ , All Rights Reserved.")
+    call append(12, "*********************************************************************************************/")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endfunction
+
+function! UpdateTitle()
+    normal m'
+    execute '/# *Filename:/s@:.*$@\=":\t\t".expand("%:t")@'
+    execute "noh"
+    normal mk
+    execute '/# *Last modifiled:/s@:.*$@\=strftime(":\t"%Y-%m-%d %H:%M")@'
+    normal ''
+    normal 'k
+    echohl WarningMsg | echo "Successful in updating the copy right." | echohl None
+endfunction
+
+function! TitleDet()
+    let n=1
+    while n < 12
+        let line = getline(n)
+            if line =~ '^\#\s*\S*Last\smodifiled:\S*.*$'
+            call UpdateTitle()
+            return
+        endif 
+        let n = n + 1
+    endwhile
+   call AddTitle()
+endfunction
+
+" noremap \hd : call AddTitle()<CR>
+noremap \hd : call TitleDet()<CR>
+
+
