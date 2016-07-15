@@ -4,10 +4,11 @@
 
 # meld "$@"
 
-MERGE="vimdiff"
-BASE=${1}   
-THEIRS=${2}
-MINE=${3}
-MERGED=${4}
+DIFF="vimdiff"
+LEFT=${6}
+RIGHT=${7}
+$DIFF $LEFT $RIGHT
 
-$MERGE $MINE $MERGED $THEIRS
+# python /home/bingquan/.subversion/svn_diff.py
+# python ~/.subversion/svn_diff.py $@
+

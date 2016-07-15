@@ -144,9 +144,9 @@ Bundle 'Shougo/neocomplcache.vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'scrooloose/nerdtree'
 Bundle 'OmniCppComplete'
-Bundle 'Lokaltog/vim-powerline'
+" Bundle 'Lokaltog/vim-powerline'
 Bundle 'repeat.vim'
-Bundle 'msanders/snipmate.vim'
+" Bundle 'msanders/snipmate.vim'
 Bundle 'wesleyche/SrcExpl'
 " Bundle 'ervandew/supertab'                "有时与 snipmate 插件冲突
 Bundle 'std_c.zip'
@@ -158,6 +158,10 @@ Bundle 'TxtBrowser'
 Bundle 'ZoomWin'
 Bundle 'lookupfile'
 Bundle 'genutils'
+Bundle 'vim-airline/vim-airline'
+Bundle 'vim-airline/vim-airline-themes'
+Bundle 'vim-fugitive'
+Bundle 'altercation/vim-colors-solarized'
 
 " -----------------------------------------------------------------------------
 "  < 编码配置 >
@@ -230,15 +234,16 @@ imap <c-l> <Right>
 "  < 界面配置 >
 " -----------------------------------------------------------------------------
 set number                                            "显示行号
-set laststatus=2                                      "启用状态栏信息
+" set laststatus=2                                      "启用状态栏信息
 set cmdheight=2                                       "设置命令行的高度为2，默认为1
 set cursorline                                        "突出显示当前行
 "set guifont=YaHei_Consolas_Hybrid:h10                 "设置字体:字号（字体名称空格用下划线代替）
 set anti enc=utf-8
-set guifont=Courier_New:h13:cANSI
+" set guifont=Courier_New:h13:cANSI
+set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 11      "config font for gvim
 
 "syntax on
-"syntax enable
+syntax enable
 
 "set nowrap                                            "设置不自动换行
 set shortmess=atI                                     "去掉欢迎界面
@@ -262,6 +267,8 @@ if g:isGUI
 else
     " colorscheme molokai
     colorscheme Tomorrow-Night-Eighties               "终端配色方案
+    " set background=dark
+    " colorscheme solarized
 endif
 
 " 显示/隐藏菜单栏、工具栏、滚动条，可用 Ctrl + F11 切换
@@ -469,7 +476,7 @@ endfunc
 " -----------------------------------------------------------------------------
 set writebackup                             "保存文件前建立备份，保存成功后删除该备份
 set nobackup                                "设置无备份文件
-" set noswapfile                              "设置无临时文件
+set noswapfile                              "设置无临时文件
 " set vb t_vb=                                "关闭提示音
 
 
@@ -628,7 +635,7 @@ let g:Powerline_symbols="fancy"
 "  < SrcExpl 插件配置 >
 " -----------------------------------------------------------------------------
 " 增强源代码浏览，其功能就像Windows中的"Source Insight"
-nmap <F3> :SrcExplToggle<CR>                "打开/闭浏览窗口
+" nmap <F3> :SrcExplToggle<CR>                "打开/闭浏览窗口
 
 " " -----------------------------------------------------------------------------
 " "  < supertab 插件配置 >
@@ -779,6 +786,16 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 0
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 
+" switch position of buffers and tabs on splited tabline (c)
+" let g:airline#extensions#tabline#switch_buffers_and_tabs = 1
+
+let g:airline#extensions#tabline#show_splits = 1
+" let g:airline#extensions#tabline#show_buffers = 0
+" let g:airline#extensions#tabline#show_tabs= 1
+" let g:airline#extensions#tabline#show_tab_nr = 0
+" let g:airline#extensions#tabline#show_tab_type = 0
+" Show just the filename
+let g:airline#extensions#tabline#fnamemod = ':t'
 "设置切换Buffer快捷键"
 nnoremap <C-N> :bn<CR>
 nnoremap <C-P> :bp<CR>
@@ -807,6 +824,36 @@ set ttimeoutlen=50
 " let g:solarized_termtrans=0
 " let g:solarized_contrast="normal"
 " let g:solarized_visibility="normal"
+"设置状态栏符号显示，下面编码用双引号"
+ let g:Powerline_symbols="fancy"
+ let g:airline_symbols = {}
+ let g:airline_left_sep = "\u2b80" 
+ let g:airline_left_alt_sep = "\u2b81"
+ let g:airline_right_sep = "\u2b82"
+ let g:airline_right_alt_sep = "\u2b83"
+ let g:airline_symbols.branch = "\u2b60"
+ let g:airline_symbols.readonly = "\u2b64"
+ let g:airline_symbols.linenr = "\u2b61"
+
+ "设置顶部tabline栏符号显示"
+ let g:airline#extensions#tabline#left_sep = "\u2b80"
+ let g:airline#extensions#tabline#left_alt_sep = "\u2b81"
+" function! AccentDemo()
+  " let keys = ['a','b','c','d','e','f','g','h']
+  " for k in keys
+    " call airline#parts#define_text(k, k)
+  " endfor
+  " call airline#parts#define_accent('a', 'red')
+  " call airline#parts#define_accent('b', 'green')
+  " call airline#parts#define_accent('c', 'blue')
+  " call airline#parts#define_accent('d', 'yellow')
+  " call airline#parts#define_accent('e', 'orange')
+  " call airline#parts#define_accent('f', 'purple')
+  " call airline#parts#define_accent('g', 'bold')
+  " call airline#parts#define_accent('h', 'italic')
+  " let g:airline_section_a = airline#section#create(keys)
+" endfunction
+" autocmd VimEnter * call AccentDemo()
 " -----------------------------------------------------------------------------
 "  < cscope 工具配置 >
 " -----------------------------------------------------------------------------
@@ -1111,4 +1158,65 @@ set pastetoggle=<F3>
 " yank to system clipboard
 set mouse=v
 
-noremap \hd I/******************************************************************************************* <CR><CR>  File Name: .h <CR><CR>Version: 1.00 <CR><CR>Discription: <CR><CR>Author:Bingquan Cai <CR><CR>Email :bingquan_cai@zh-jieli.com <CR><CR>Date:<CR><CR>Copyright:(c)JIELI  2016  @ , All Rights Reserved.<CR><CR>*******************************************************************************************/<Esc> 
+
+fun! DeleteAllBuffersInWindow()
+    let s:curWinNr = winnr()
+    if winbufnr(s:curWinNr) == 1
+        ret
+    endif
+    let s:curBufNr = bufnr("%")
+    exe "bn"
+    let s:nextBufNr = bufnr("%")
+    while s:nextBufNr != s:curBufNr
+        exe "bn"
+        exe "bdel ".s:nextBufNr
+        let s:nextBufNr = bufnr("%")
+    endwhile
+endfun
+map <silent> <leader>bda     :call DeleteAllBuffersInWindow()<CR>
+
+function! AddTitle()
+    call append(0, "/*********************************************************************************************")
+    call append(1, "    *   Filename        : ".expand("%:t"))
+    call append(2, "")
+    call append(3, "    *   Description     : ")
+    call append(4, "")
+    call append(5, "    *   Author          : Bingquan")
+    call append(6, "")
+    call append(7, "    *   Email           : bingquan_cai@zh-jieli.com")
+    call append(8, "")
+    call append(9, "    *   Last modifiled  : ".strftime("%Y-%m-%d %H:%M"))
+    call append(10, "")
+    call append(11, "    *   Copyright:(c)JIELI  2011-2016  @ , All Rights Reserved.")
+    call append(12, "*********************************************************************************************/")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endfunction
+
+function! UpdateTitle()
+    normal m'
+    execute '/# *Filename:/s@:.*$@\=":\t\t".expand("%:t")@'
+    execute "noh"
+    normal mk
+    execute '/# *Last modifiled:/s@:.*$@\=strftime(":\t"%Y-%m-%d %H:%M")@'
+    normal ''
+    normal 'k
+    echohl WarningMsg | echo "Successful in updating the copy right." | echohl None
+endfunction
+
+function! TitleDet()
+    let n=1
+    while n < 12
+        let line = getline(n)
+            if line =~ '^\#\s*\S*Last\smodifiled:\S*.*$'
+            call UpdateTitle()
+            return
+        endif 
+        let n = n + 1
+    endwhile
+   call AddTitle()
+endfunction
+
+" noremap \hd : call AddTitle()<CR>
+noremap \hd : call TitleDet()<CR>
+
+
