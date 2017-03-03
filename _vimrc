@@ -980,26 +980,21 @@ else
 	let g:Env_shell = 0
 endif
 
-function! SyncProjectTags()
-	cs kill -1
-    if g:islinux
-        !bash project_config.sh
-    endif
-    if g:iswindows
-		!sync.bat
-    endif
-	cs add cscope.out
-	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
-	let g:LookupFile_TagExpr = '"./filenametags"'
-endfunction
-command! Syncp :call SyncProjectTags()
 
 function! SyncAllTags()
 	cs kill -1
 	if g:Env_shell == 1
-		!bash sync.sh
+        if filereadable("project_config.sh")
+            !bash project_config.sh
+        else
+            !bash sync.sh
+        endif
 	else
-		!sync.bat
+        if filereadable("project_config.sh")
+            !project_config.bat
+        else
+            !sync.bat
+        endif
 	endif
 	cs add cscope.out
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）

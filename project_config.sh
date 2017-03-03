@@ -22,18 +22,20 @@
 # ----------- cscope
 DIR=.
 export TARGET=br17
-export EXCEPT=br16
+export TARGET_APPS=apps
+
 # echo ${DIR}
 # echo ${TARGET}
 
-echo reloading ${TARGET} project ...
+echo reloading ${TARGET} - ${TARGET_APPS} project ...
 
-find ${DIR} -path "${DIR}/apps/cpu/*" ! -path "${DIR}/apps/cpu/${TARGET}*" -prune -o \
-    -path "${DIR}/apps/include/cpu/*" ! -path "${DIR}/apps/include/cpu/${TARGET}*" -prune -o \
+find ${DIR} -path "${DIR}/${TARGET_APPS}/cpu/*" ! -path "${DIR}/${TARGET_APPS}/cpu/${TARGET}*" -prune -o \
+    -path "${DIR}/${TARGET_APPS}/include/cpu/*" ! -path "${DIR}/${TARGET_APPS}/include/cpu/${TARGET}*" -prune -o \
     -path "${DIR}/include_lib/cpu/*" ! -path "${DIR}/include_lib/cpu/${TARGET}*" -prune -o \
     -path "${DIR}/libs/cpu/*" ! -path "${DIR}/libs/cpu/${TARGET}*" -prune -o \
-    -path "${DIR}/libs/ac461x_uboot_lib" -prune -o \
-    -path "${DIR}/target" -prune -o \
+    -path "${DIR}/libs/btstack/Baseband/BLE/*" ! -path "${DIR}/libs/btstack/Baseband/BLE/${TARGET}*" -prune -o \
+    -path "${DIR}/libs/btstack/Baseband/common/*" ! -path "${DIR}/libs/btstack/Baseband/common/${TARGET}*" -prune -o \
+    -path "${DIR}/tools*" -prune -o \
     -name "*.[Sch]" -print > cscope.files
 
 
@@ -49,5 +51,18 @@ find ${DIR} -path "${DIR}/apps/cpu/*" ! -path "${DIR}/apps/cpu/${TARGET}*" -prun
 # find ${PROJECT} -name "*.[Sch]" -print >> project_path.txt
 
 # ----------- lookup file
+export EXCEPT=br16
+export FIND_EXCEPT="find . ! -path "*git*" ! -path "*bt16*" ! -path "*br16*""
 
-bash sync.sh
+# ctags -R --fields=+lS --languages=+Asm --exclude ${exclude_dir}
+ctags -R --fields=+lS --languages=+Asm 
+
+# ----------- cscope
+
+cscope -bR
+
+
+# ----------- lookup file
+echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/">filenametags
+
+${FIND_EXCEPT} -not -regex '.*\.\(png\|gif\|o\|d\|obj\)' -type f -printf "%f\t%p\t1\n" | sort -f>>filenametags
