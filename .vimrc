@@ -133,14 +133,14 @@ Bundle 'a.vim'
 Bundle 'Align'
 Bundle 'jiangmiao/auto-pairs'
 Bundle 'bufexplorer.zip'
-"Bundle 'ccvext.vim'
+Bundle 'ccvext.vim'
 Bundle 'cSyntaxAfter'
 "Bundle 'Yggdroot/indentLine'
 " Bundle 'javacomplete'
 " Bundle 'vim-javacompleteex'               "更好的 Java 补全插件
 "Bundle 'Mark--Karkat'
 " Bundle 'fholgado/minibufexpl.vim'         "好像与 Vundle 插件有一些冲突
-Bundle 'Shougo/neocomplcache.vim'
+" Bundle 'Shougo/neocomplcache.vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'scrooloose/nerdtree'
 Bundle 'OmniCppComplete'
@@ -162,6 +162,10 @@ Bundle 'vim-airline/vim-airline'
 Bundle 'vim-airline/vim-airline-themes'
 Bundle 'vim-fugitive'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'easymotion/vim-easymotion'
+Bundle 'vim-scripts/DoxygenToolkit.vim-master'
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'rdnetto/YCM-Generator-stable'
 
 " -----------------------------------------------------------------------------
 "  < 编码配置 >
@@ -265,10 +269,13 @@ if g:isGUI
 	"set background=dark
 	"colorscheme solarized
 else
-    " colorscheme molokai
-    colorscheme Tomorrow-Night-Eighties               "终端配色方案
+    colorscheme molokai
+    let g:molokai_original = 1
+    let g:rehash256 = 1
+    " colorscheme Tomorrow-Night-Eighties               "终端配色方案
     " set background=dark
     " colorscheme solarized
+    " colorscheme spacevim
 endif
 
 " 显示/隐藏菜单栏、工具栏、滚动条，可用 Ctrl + F11 切换
@@ -290,186 +297,6 @@ if g:isGUI
     \endif<CR>
 endif
 
-" -----------------------------------------------------------------------------
-"  < 单文件编译、连接、运行配置 >
-" -----------------------------------------------------------------------------
-" 以下只做了 C、C++ 的单文件配置，其它语言可以参考以下配置增加
-
-" F9 一键保存、编译、连接存并运行
-" map <F9> :call Run()<CR>
-" imap <F9> <ESC>:call Run()<CR>
-
-" " Ctrl + F9 一键保存并编译
-" map <c-F9> :call Compile()<CR>
-" imap <c-F9> <ESC>:call Compile()<CR>
-
-" " Ctrl + F10 一键保存并连接
-" map <c-F10> :call Link()<CR>
-" imap <c-F10> <ESC>:call Link()<CR>
-
-let s:LastShellReturn_C = 0
-let s:LastShellReturn_L = 0
-let s:ShowWarning = 1
-let s:Obj_Extension = '.o'
-let s:Exe_Extension = '.exe'
-let s:Sou_Error = 0
-
-let s:windows_CFlags = 'gcc\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-let s:linux_CFlags = 'gcc\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-
-let s:windows_CPPFlags = 'g++\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-let s:linux_CPPFlags = 'g++\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-
-func! Compile()
-    exe ":ccl"
-    exe ":update"
-    let s:Sou_Error = 0
-    let s:LastShellReturn_C = 0
-    let Sou = expand("%:p")
-    let v:statusmsg = ''
-    if expand("%:e") == "c" || expand("%:e") == "cpp" || expand("%:e") == "cxx"
-        let Obj = expand("%:p:r").s:Obj_Extension
-        let Obj_Name = expand("%:p:t:r").s:Obj_Extension
-        if !filereadable(Obj) || (filereadable(Obj) && (getftime(Obj) < getftime(Sou)))
-            redraw!
-            if expand("%:e") == "c"
-                if g:iswindows
-                    exe ":setlocal makeprg=".s:windows_CFlags
-                else
-                    exe ":setlocal makeprg=".s:linux_CFlags
-                endif
-                echohl WarningMsg | echo " compiling..."
-                silent make
-            elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
-                if g:iswindows
-                    exe ":setlocal makeprg=".s:windows_CPPFlags
-                else
-                    exe ":setlocal makeprg=".s:linux_CPPFlags
-                endif
-                echohl WarningMsg | echo " compiling..."
-                silent make
-            endif
-            redraw!
-            if v:shell_error != 0
-                let s:LastShellReturn_C = v:shell_error
-            endif
-            if g:iswindows
-                if s:LastShellReturn_C != 0
-                    exe ":bo cope"
-                    echohl WarningMsg | echo " compilation failed"
-                else
-                    if s:ShowWarning
-                        exe ":bo cw"
-                    endif
-                    echohl WarningMsg | echo " compilation successful"
-                endif
-            else
-                if empty(v:statusmsg)
-                    echohl WarningMsg | echo " compilation successful"
-                else
-                    exe ":bo cope"
-                endif
-            endif
-        else
-            echohl WarningMsg | echo ""Obj_Name"is up to date"
-        endif
-    else
-        let s:Sou_Error = 1
-        echohl WarningMsg | echo " please choose the correct source file"
-    endif
-    exe ":setlocal makeprg=make"
-endfunc
-
-func! Link()
-    call Compile()
-    if s:Sou_Error || s:LastShellReturn_C != 0
-        return
-    endif
-    if expand("%:e") == "c" || expand("%:e") == "cpp" || expand("%:e") == "cxx"
-        let s:LastShellReturn_L = 0
-        let Sou = expand("%:p")
-        let Obj = expand("%:p:r").s:Obj_Extension
-        if g:iswindows
-            let Exe = expand("%:p:r").s:Exe_Extension
-            let Exe_Name = expand("%:p:t:r").s:Exe_Extension
-        else
-            let Exe = expand("%:p:r")
-            let Exe_Name = expand("%:p:t:r")
-        endif
-        let v:statusmsg = ''
-        if filereadable(Obj) && (getftime(Obj) >= getftime(Sou))
-            redraw!
-            if !executable(Exe) || (executable(Exe) && getftime(Exe) < getftime(Obj))
-                if expand("%:e") == "c"
-                    setlocal makeprg=gcc\ -o\ %<\ %<.o
-                    echohl WarningMsg | echo " linking..."
-                    silent make
-                elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
-                    setlocal makeprg=g++\ -o\ %<\ %<.o
-                    echohl WarningMsg | echo " linking..."
-                    silent make
-                endif
-                redraw!
-                if v:shell_error != 0
-                    let s:LastShellReturn_L = v:shell_error
-                endif
-                if g:iswindows
-                    if s:LastShellReturn_L != 0
-                        exe ":bo cope"
-                        echohl WarningMsg | echo " linking failed"
-                    else
-                        if s:ShowWarning
-                            exe ":bo cw"
-                        endif
-                        echohl WarningMsg | echo " linking successful"
-                    endif
-                else
-                    if empty(v:statusmsg)
-                        echohl WarningMsg | echo " linking successful"
-                    else
-                        exe ":bo cope"
-                    endif
-                endif
-            else
-                echohl WarningMsg | echo ""Exe_Name"is up to date"
-            endif
-        endif
-        setlocal makeprg=make
-    endif
-endfunc
-
-func! Run()
-    let s:ShowWarning = 0
-    call Link()
-    let s:ShowWarning = 1
-    if s:Sou_Error || s:LastShellReturn_C != 0 || s:LastShellReturn_L != 0
-        return
-    endif
-    let Sou = expand("%:p")
-    if expand("%:e") == "c" || expand("%:e") == "cpp" || expand("%:e") == "cxx"
-        let Obj = expand("%:p:r").s:Obj_Extension
-        if g:iswindows
-            let Exe = expand("%:p:r").s:Exe_Extension
-        else
-            let Exe = expand("%:p:r")
-        endif
-        if executable(Exe) && getftime(Exe) >= getftime(Obj) && getftime(Obj) >= getftime(Sou)
-            redraw!
-            echohl WarningMsg | echo " running..."
-            if g:iswindows
-                exe ":!%<.exe"
-            else
-                if g:isGUI
-                    exe ":!gnome-terminal -x bash -c './%<; echo; echo 请按 Enter 键继续; read'"
-                else
-                    exe ":!clear; ./%<"
-                endif
-            endif
-            redraw!
-            echohl WarningMsg | echo " running finish"
-        endif
-    endif
-endfunc
 
 " -----------------------------------------------------------------------------
 "  < 其它配置 >
@@ -563,6 +390,7 @@ let g:indentLine_color_term = 239
 " let g:miniBufExplMapCTabSwitchBufs = 1      "功能增强（不过好像只有在Windows中才有用）
 " "                                            <C-Tab> 向前循环切换到每个buffer上,并在但前窗口打开
 " "                                            <C-S-Tab> 向后循环切换到每个buffer上,并在当前窗口打开
+
 
 " 在不使用 MiniBufExplorer 插件时也可用<C-k,j,h,l>切换到上下左右的窗口中去
 noremap <c-k> <c-w>k
@@ -661,18 +489,18 @@ let c_cpp_comments = 0
 "  < Syntastic 插件配置 >
 " -----------------------------------------------------------------------------
 " 用于保存文件时查检语法
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_enable_signs = 1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_auto_jump = 1
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_enable_signs = 1
+" let g:syntastic_error_symbol = '✗'
+" let g:syntastic_warning_symbol = '⚠'
+" let g:syntastic_auto_jump = 1
 " -----------------------------------------------------------------------------
 "  < Tagbar 插件配置 >
 " -----------------------------------------------------------------------------
@@ -768,15 +596,19 @@ let g:miniBufExplModSelTarget = 1
 """"""""""""""""""""""""""""""
 " airline
 """"""""""""""""""""""""""""""
-let g:airline_theme='luna'
+" let g:airline_theme='luna'
+let g:airline_theme='wombat'
 " let g:airline#extensions#tabline#left_sep = ' '
 " let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline_powerline_fonts = 1
 
-" let g:airline#extensions#branch#enabled = 1
 
 let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#branch#vcs_priority = ["git"]
+
+" enable/disable fugitive/lawrencium integration
+" let g:airline#extensions#branch#enabled = 1
+" let g:airline#extensions#branch#vcs_priority = ["git"]
+"
 " enable/disable detection of whitespace errors. >
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
@@ -824,6 +656,10 @@ set ttimeoutlen=50
 " let g:solarized_termtrans=0
 " let g:solarized_contrast="normal"
 " let g:solarized_visibility="normal"
+
+""""""""""""""""""""""""""""""
+" Airline
+""""""""""""""""""""""""""""""
 "设置状态栏符号显示，下面编码用双引号"
  let g:Powerline_symbols="fancy"
  let g:airline_symbols = {}
@@ -854,6 +690,55 @@ set ttimeoutlen=50
   " let g:airline_section_a = airline#section#create(keys)
 " endfunction
 " autocmd VimEnter * call AccentDemo()
+
+""""""""""""""""""""""""""""""
+" easymotion
+""""""""""""""""""""""""""""""
+" <Leader>f{char} to move to {char}
+" map  <Leader>f <Plug>(easymotion-bd-f)
+" nmap <Leader>f <Plug>(easymotion-overwin-f)
+map  <s-f> <Plug>(easymotion-bd-f)
+nmap <s-f> <Plug>(easymotion-overwin-f)
+"
+" " s{char}{char} to move to {char}{char}
+" nmap s <Plug>(easymotion-overwin-f2)
+"
+"" Move to line
+" map <Leader>l <Plug>(easymotion-bd-jk)
+" nmap <Leader>l <Plug>(easymotion-overwin-line)
+map <s-e> <Plug>(easymotion-bd-jk)
+nmap <s-e> <Plug>(easymotion-overwin-line)
+
+" Move to word
+" map  <Leader>w <Plug>(easymotion-bd-w)
+" nmap <Leader>w <Plug>(easymotion-overwin-w)
+map  <s-w> <Plug>(easymotion-bd-w)
+nmap <s-w> <Plug>(easymotion-overwin-w)
+
+"Gif config
+" map / <Plug>(easymotion-sn)
+" omap / <Plug>(easymotion-tn)
+
+" These `n` & `N` mappings are options. You do not have to map `n` & `N` to EasyMotion.
+" Without these mappings, `n` & `N` works fine. (These mappings just provide
+" different highlight method and have some other features )
+" map  n <Plug>(easymotion-next)
+" map  N <Plug>(easymotion-prev)
+
+" Gif config
+" map <Leader>l <Plug>(easymotion-lineforward)
+" map <Leader>j <Plug>(easymotion-j)
+" map <Leader>k <Plug>(easymotion-k)
+" map <Leader>h <Plug>(easymotion-linebackward)
+map <s-l> <Plug>(easymotion-lineforward)
+map <s-j> <Plug>(easymotion-j)
+map <s-k> <Plug>(easymotion-k)
+map <s-h> <Plug>(easymotion-linebackward)
+
+let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
+
+let g:EasyMotion_smartcase = 1
+" "
 " -----------------------------------------------------------------------------
 "  < cscope 工具配置 >
 " -----------------------------------------------------------------------------
@@ -957,7 +842,25 @@ if (g:iswindows && g:isGUI)
     map <s-down> :call Alpha_sub()<CR>
     map <leader>t :call Top_window()<CR>
 endif
+" =============================================================================
+"                          << YouCompleteMe>>
+" =============================================================================
+let g:ycm_server_python_interpreter = '/usr/bin/python'
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_key_invoke_completion = '<C-i>'
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_complete_in_strings = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_error_symbol = 'XX'
+let g:ycm_warning_symbol = '!!'
 
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>gi :YcmCompleter GoToInclude<CR>
+nnoremap <leader>gt :YcmCompleter GoTo<CR>
+" nmap <F4> :YcmDiags<CR>
 " =============================================================================
 "                          << 以下为常用自动命令配置 >>
 " =============================================================================
@@ -1004,17 +907,25 @@ endif
 	" let g:Env_shell = 0
 " endif
 
+
 function! SyncAllTags()
 	cs kill -1
     if g:islinux
-		!bash sync.sh
+        if filereadable("project_config.sh")
+            !bash project_config.sh
+        else
+            !bash sync.sh
+        endif
     endif
     if g:iswindows
 		!sync.bat
     endif
 	cs add cscope.out
 	set tags=./tags;                            "向上级目录递归查找tags文件（好像只有在Windows下才有用）
-	let g:LookupFile_TagExpr = '"./filenametags"'
+    if filereadable("filenametags")                "设置tag文件的名字
+        let g:LookupFile_TagExpr = '"./filenametags"'
+    endif
+    :YcmRestartServer
 endfunction
 
 if g:islinux
@@ -1024,7 +935,6 @@ endif
 if g:iswindows
 command! Sync :silent call SyncAllTags()
 endif
-
 " set errorformat=%f:%l:%c:\ fatal\ error:\ %m
 " set errorformat+=%f:%l:%c:\ fatal\ error:\ %m,%f:(%.%#):\ %m
 " set errorformat+=%Dmake[%*\\d]:\ Entering\ directory\ `%f',%Dmake[%*\\d]:\ Leaving\ directory\ `%f',
@@ -1062,6 +972,8 @@ inoremap {<CR> {<CR><CR>}<Esc>k
 if g:islinux
 command! Source :source ~/.vimrc
 command! Vimrc :edit ~/.vimrc
+command! Proj :edit ./project_config.sh
+command! Conf :edit ~/.vim/bin/sync.sh
 endif
 
 if g:iswindows
@@ -1091,8 +1003,8 @@ nmap > <c-w>>
 nmap <silent> <F7> :make -j<CR>
 nmap <silent> <F8> :make clean<CR>
 
-nmap <silent> <F9> :make -f MakeALL.mk -j 
-nmap <silent> <F10> :make -f MakeALL.mk clean 
+nmap <silent> <F9> :make libs -j<CR>
+nmap <silent> <F10> :make clean_libs<CR>
 
 " nmap <F11> :make -f MakeALL.mk 
 " nmap <F12> :make -f MakeALL.mk clean 
@@ -1102,6 +1014,7 @@ nmap <silent> <F6> :cn<CR>
 
 nmap ;f 	/\<\><Left><Left>
 vmap ;l		:s/\\/\//g<CR>
+vmap ;w		:s/\//\\/g<CR>
 vmap ;a     :s/$/ \\/g<CR>
 vmap ;o     :s/\.c/\.o/g<CR>
 nmap ;m     :%s/\r//g
@@ -1158,6 +1071,12 @@ set pastetoggle=<F3>
 " yank to system clipboard
 set mouse=v
 
+set undofile
+set undodir=~/.my_tmp/vim_undos/
+
+"Set 透明
+hi Normal ctermfg=none ctermbg=none cterm=none
+
 
 fun! DeleteAllBuffersInWindow()
     let s:curWinNr = winnr()
@@ -1187,7 +1106,7 @@ function! AddTitle()
     call append(8, "")
     call append(9, "    *   Last modifiled  : ".strftime("%Y-%m-%d %H:%M"))
     call append(10, "")
-    call append(11, "    *   Copyright:(c)JIELI  2011-2016  @ , All Rights Reserved.")
+    call append(11, "    *   Copyright:(c)JIELI  2011-2017  @ , All Rights Reserved.")
     call append(12, "*********************************************************************************************/")
     echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
 endfunction
@@ -1219,4 +1138,13 @@ endfunction
 " noremap \hd : call AddTitle()<CR>
 noremap \hd : call TitleDet()<CR>
 
+noremap \rl  I-----------------tags sdk_release_v----------------<Esc>
 
+" let g:DoxygenToolkit_briefTag_pre="@Synopsis  "
+" let g:DoxygenToolkit_paramTag_pre="@Param "
+" let g:DoxygenToolkit_returnTag="@Returns   "
+" let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
+" let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+" let g:DoxygenToolkit_authorName="Mathias Lorente"
+" let g:DoxygenToolkit_licenseTag="My own license"   <-- !!! Does not end with "\<enter>"
+let g:DoxygenToolkit_briefTag_funcName = "yes"
